@@ -8,10 +8,10 @@
 import SwiftUI
 
 @main
-struct TranslatorAppApp: App {
+struct TranslatorApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: TranslatorViewModel(translationService: OpenAITranslationService()))
+            ContentView(viewModel: TranslatorViewModel(translationService: LibreTranslateTranslationService()))// ChatGPTTranslationService()))
         }
     }
 }

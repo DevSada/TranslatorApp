@@ -9,52 +9,68 @@ import SwiftUI
 
 struct ContentView: View {
     @ObservedObject var viewModel: TranslatorViewModel
-    @State private var inputText: String = ""
-    @State private var translateText: String = ""
-    @State private var sourceLanguage: String = "en"
-    @State private var targetLanguage: String = "ru"
+
     
-    let languages: [String] = ["en", "ru", "de", "fr", "es", "it", "pt", "ar", "ja", "ko", "zh"]
+    //let languages = ["English", "Russian", "Spanish", "French", "German"]
     
     var body: some View {
+        
         HStack(spacing: 20) {
             VStack {
-                Picker("From", selection: $sourceLanguage) {
-                    ForEach(languages, id: \.self) {
+                Picker("From", selection: $viewModel.sourceLanguage) {
+                    ForEach(["auto", "en", "es", "fr", "de", "ru"], id: \.self) {
                         Text($0)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
                 .padding()
                 
-                TextField("Enter Text", text: $inputText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextEditor(text: $viewModel.inputText)
+                    .frame(minHeight: 50, maxHeight: 100)
                     .padding()
             }
             .frame(maxWidth: .infinity)
             
             VStack {
-                Picker("To", selection: $targetLanguage) {
-                    ForEach(languages, id: \.self) {
+                Picker("To", selection: $viewModel.targetLanguage) {
+                    ForEach(["ru", "en", "es", "fr", "de"], id: \.self) {
                         Text($0)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
                 .padding()
                 
-                TextField("Translation", text: $translateText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                TextEditor(text: $viewModel.translateText)
+                    .frame(minHeight: 50, maxHeight: 100)
                     .padding()
-                    .disabled(true)
+                
             }
             .frame(maxWidth: .infinity)
         }
         .padding()
-        .onChange(of: inputText) { newText in
-            viewModel.performTranslation(inputText: newText, from: sourceLanguage, to: targetLanguage) { translated in
-                translateText = translated
+//        .onChange(of: viewModel.inputText) {val, _ in
+//                        viewModel.performTranslation()
+//                    }
+//        .onChange(of: viewModel.sourceLanguage) {val, _ in
+//            viewModel.performTranslation()
+//        }
+//        .onChange(of: viewModel.targetLanguage) {val, _ in
+//            viewModel.performTranslation()
+//        }
+        
+        Button("translate") {
+            viewModel.performTranslation()
+        }
+        .padding()
+        
+        if let errorMessage = viewModel.errorMessages {
+            VStack {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .padding()
             }
         }
+       
     }
 }
 
